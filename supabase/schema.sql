@@ -20,3 +20,9 @@ create policy "Allow anon read" on tasks for select using (true);
 create policy "Allow anon insert" on tasks for insert with check (true);
 create policy "Allow anon update" on tasks for update using (true) with check (true);
 create policy "Allow anon delete" on tasks for delete using (true);
+
+-- 3. 表权限（关键）
+-- Supabase 新项目默认不会自动给 anon / authenticated 授予表权限，
+-- 只开 RLS 策略仍会报 permission denied for table tasks，必须补下面两句。
+grant usage on schema public to anon, authenticated;
+grant select, insert, update, delete on table public.tasks to anon, authenticated;
