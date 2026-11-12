@@ -43,7 +43,7 @@ Node.js（Next.js）+ React + Supabase 的任务管理系统，配套《练习�
 │   ├── smart.js                 # 智能优先级规则
 │   ├── format.js                # 时间格式化
 │   └── store.js                 # 数据访问层（Supabase / 本地降级）
-├── supabase/schema.sql          # 建表 + RLS 策略
+├── supabase/schema.sql          # 建表 + RLS 策略 + 表权限 grant
 ├── .env.example                 # 环境变量模板
 └── package.json
 ```
@@ -76,7 +76,7 @@ npm run dev                   # 打开 http://localhost:3000
 | completed | boolean，默认 false | 是否完成 |
 | created_at | timestamptz，默认 now() | 创建时间（用于倒序） |
 
-`schema.sql` 同时创建了四条 RLS 策略（允许匿名读写），**不做这一步写入会被 RLS 拦截**。
+`schema.sql` 同时创建了四条 RLS 策略（允许匿名读写）并给 anon 授予表权限，**不做这一步读写会被拦截**。
 
 ## 三、上传到 GitHub
 
@@ -128,6 +128,7 @@ git push -u origin main
 ## 常见问题
 
 - **`new row violates row-level security policy`**：RLS 策略没开全，重跑 `schema.sql` 中四条 policy。
+- **`permission denied for table tasks`**：表权限没授予，重跑 `schema.sql` 第 3 段的两条 `grant` 语句。
 - **`relation "tasks" does not exist`**：建表 SQL 没执行成功，重跑建表部分。
 - **Vercel 上能打开但没有数据 / 报错**：检查环境变量名是否写错（必须是 `SUPABASE_URL`、`SUPABASE_ANON_KEY`），改完要 Redeploy。
 - **本地能看到数据，Vercel 看不到**：两边连的不是同一个 Supabase 项目，核对 URL 中的项目 ID。
